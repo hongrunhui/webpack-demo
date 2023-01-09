@@ -9,9 +9,9 @@ let port = process.argv[3] || '8889';
 let host = ip.v4.sync();
 // console.log(webpackConfig);
 const compiler = webpack(webpackConfig);
-let server = new WebpackDevServer(compiler, {
+let server = new WebpackDevServer({
     hot: true,
-    open: true,
+    open: false,
     static: {
         directory: path.join(__dirname, '../'),
         watch: true
@@ -27,7 +27,7 @@ let server = new WebpackDevServer(compiler, {
         ]
     },
     host: host,
-});
+}, compiler);
 // initOpenFile(rootPath);
 server.startCallback(err => {
     console.log('跑起来了', err);
