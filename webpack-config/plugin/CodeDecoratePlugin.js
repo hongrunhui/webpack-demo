@@ -8,16 +8,21 @@ class CodeDecoratePlugin {
     apply(compiler) {
         const self = this;
         const webpack = compiler.webpack;
-        compiler.hooks.make.tap('CodeDecoratePlugin', compilation => {
-            compilation.hooks.succeedModule.tap('CodeDecoratePlugin', function (module) {
+        compiler.hooks.finishMake.tap('CodeDecoratePlugin', compilation => {
+            compilation.hooks.afterCodeGeneration.tap('CodeDecoratePlugin', function (module) {
+                return true;
                 const value = module._source._value;
                 const file = module.request;
-                if (!/webpack-dev-serve|\/webpack\//.test(file)) {
+                let newsource = module._source._value.replace(/['"]use strict['"];?/gi, '\n')//这里是源码
+                module._source._value = newsource
+
+                if (/node_modules\\_?webpack-dev-serve|node_modules\\_?webpack/.test(file)) {
                     console.log(file);
+                    return;
                 }
                 if (/index.js/.test(module.request)) {
-                    let newsource = module._source._value//这里是源码
-                    newsource = newsource.replace(/777777777/g,`(function(){console.log(123);return 90;})()`)
+                    // let newsource = module._source._value;
+                    // newsource = `\nconsole.log("我的模块名字是：${module.request}")\n` + newsource;
                     module._source._value = newsource
                 }
             });
