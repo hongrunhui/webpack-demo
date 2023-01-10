@@ -8,8 +8,28 @@ class CodeDecoratePlugin {
     apply(compiler) {
         const self = this;
         const webpack = compiler.webpack;
+        compiler.hooks.thisCompilation.tap('CodeDecoratePlugin', compilation => {
+            compilation.hooks.log.tap('CodeDecoratePlugin', (name, logEntry) => {
+                const log = `[${name}]: ${logEntry.args[0]}`;
+                console.log(log);
+                return 1;
+            });
+        })
+        compiler.hooks.initialize.tap('CodeDecoratePlugin', compilation => {
+            // compilation.hooks.log.tap('CodeDecoratePlugin', (name, logEntry) => {
+            //     const log = `[${name}]: ${logEntry.args[0]}`;
+            //     console.log(log);
+            //     return 1;
+            // });
+        })
         compiler.hooks.finishMake.tap('CodeDecoratePlugin', compilation => {
+            compilation.hooks.log.tap('CodeDecoratePlugin', (name, logEntry) => {
+                const log = `[${name}]: ${logEntry.args[0]}`;
+                console.log(log);
+                return 1;
+            });
             compilation.hooks.afterCodeGeneration.tap('CodeDecoratePlugin', function (module) {
+                console.log('compilation', compilation);
                 return true;
                 const value = module._source._value;
                 const file = module.request;
